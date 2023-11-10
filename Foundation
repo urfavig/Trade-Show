@@ -1,0 +1,186 @@
+#### Event GUI ###
+import tkinter as tk
+from tkinter import messagebox
+
+# Function to handle the event registration
+def register_event():
+    event_name = event_name_entry.get()
+    participant_name = participant_name_entry.get()
+    
+    # You can replace this with your event registration logic
+    # For now, just display a message box with the registration details
+    message = f"Event Name: {event_name}\nParticipant Name: {participant_name}"
+    messagebox.showinfo("Registration Successful", message)
+
+# Create the main application window
+root = tk.Tk()
+root.title("Event Registration")
+
+# Create and configure labels and entry fields for event name and participant name
+event_name_label = tk.Label(root, text="Event Name:")
+event_name_label.pack()
+event_name_entry = tk.Entry(root)
+event_name_entry.pack()
+
+participant_name_label = tk.Label(root, text="Participant Name:")
+participant_name_label.pack()
+participant_name_entry = tk.Entry(root)
+participant_name_entry.pack()
+
+# Create a button to register for the event
+register_button = tk.Button(root, text="Register", command=register_event)
+register_button.pack()
+
+# Start the main event loop
+root.mainloop()
+
+
+# Event Organization Staff Login/Logout System
+
+staff_credentials = {'username': 'staff123', 'password': 'pass123'}  # You can add more staff credentials to this dictionary
+
+def login():
+    username = input("Username: ")
+    password = input("Password: ")
+
+    if username == staff_credentials['username'] and password == staff_credentials['password']:
+        print("Login successful!")
+        return True
+    else:
+        print("Invalid username or password. Please try again.")
+        return False
+
+def logout():
+    print("Logged out successfully.")
+
+# Example usage
+while True:
+    action = input("Enter 'login' to login, 'logout' to logout, or 'exit' to quit: ")
+
+    if action == 'login':
+        if login():
+            # Do something after successful login
+            print("You can now perform staff tasks.")
+        else:
+            print("Login failed. Please try again.")
+
+    elif action == 'logout':
+        logout()
+        # Do something after logout
+        print("You have logged out. You can no longer perform staff tasks.")
+
+    elif action == 'exit':
+        break
+
+    else:
+        print("Invalid action. Please try again.")
+
+# Event Organization Staff Event Creation
+
+events = []
+
+def create_event():
+    event_name = input("Enter event name: ")
+    event_date = input("Enter event date: ")
+    event_description = input("Enter event description: ")
+
+    event = {
+        'name': event_name,
+        'date': event_date,
+        'description': event_description
+    }
+
+    events.append(event)
+    print("Event created successfully.")
+
+# Example usage
+while True:
+    action = input("Enter 'create' to create an event, or 'exit' to quit: ")
+
+    if action == 'create':
+        create_event()
+    
+    elif action == 'exit':
+        break
+
+    else:
+        print("Invalid action. Please try again.")
+
+# Print all events
+print("All events:")
+for index, event in enumerate(events, start=1):
+    print(f"Event {index}:")
+    for key, value in event.items():
+        print(f"{key}: {value}")
+    print()
+# Event Management System
+
+events = []
+
+def add_event():
+    event_name = input("Enter event name: ")
+    event_date = input("Enter event date: ")
+    event_description = input("Enter event description: ")
+
+    event = {
+        'name': event_name,
+        'date': event_date,
+        'description': event_description
+    }
+
+    events.append(event)
+    print("Event added successfully.")
+
+def modify_event():
+    event_index = int(input("Enter the index of the event you want to modify: ")) - 1
+    if 0 <= event_index < len(events):
+        event = events[event_index]
+        print(f"Current event data: {event}")
+        event_name = input("Enter new event name (press Enter to keep current): ")
+        event_date = input("Enter new event date (press Enter to keep current): ")
+        event_description = input("Enter new event description (press Enter to keep current): ")
+
+        if event_name:
+            event['name'] = event_name
+        if event_date:
+            event['date'] = event_date
+        if event_description:
+            event['description'] = event_description
+
+        events[event_index] = event
+        print("Event modified successfully.")
+    else:
+        print("Invalid event index.")
+
+def delete_event():
+    event_index = int(input("Enter the index of the event you want to delete: ")) - 1
+    if 0 <= event_index < len(events):
+        del events[event_index]
+        print("Event deleted successfully.")
+    else:
+        print("Invalid event index.")
+
+# Example usage
+while True:
+    action = input("Enter 'add' to add an event, 'modify' to modify an event, 'delete' to delete an event, or 'exit' to quit: ")
+
+    if action == 'add':
+        add_event()
+    elif action == 'modify':
+        modify_event()
+    elif action == 'delete':
+        delete_event()
+    elif action == 'exit':
+        break
+    else:
+        print("Invalid action. Please try again.")
+
+# Print all events
+print("All events:")
+for index, event in enumerate(events, start=1):
+    print(f"Event {index}:")
+    for key, value in event.items():
+        print(f"{key}: {value}")
+    print()
+
+
