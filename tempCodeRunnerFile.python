@@ -1,0 +1,21 @@
+# Create and configure labels and entry fields for username and password
+username_label = tk.Label(root, text="Username:")
+username_label.pack(pady=10)
+username_entry = tk.Entry(root)
+username_entry.pack(pady=10)
+
+password_label = tk.Label(root, text="Password:")
+password_label.pack(pady=10)
+password_entry = tk.Entry(root, show="*")  # Show "*" for password entry
+password_entry.pack(pady=10)
+
+# Create a button to perform login
+login_button = tk.Button(root, text="Login", command=handle_login)
+login_button.pack(pady=10)
+
+# Create a button to open the registration window
+register_button = tk.Button(root, text="Register", command=register_user)
+register_button.pack(pady=10)
+
+# Start the main event loop
+root.mainloop()
