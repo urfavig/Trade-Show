@@ -1,6 +1,6 @@
 
 class Event:
-    def __init__(self, name, date, description):
+    def __init__(self,name, date, description):
         self._name = name
         self._date = date
         self._description = description
