@@ -1,12 +1,14 @@
 
 class Event:
-    def __init__(self,name, date, description):
+    def __init__(self,name, start_date,end_date, description,booths):
         self._name = name
-        self._date = date
+        self._start_date = start_date
+        self._end_date = end_date
         self._description = description
         self._speakers = []
         self._exhibitors = []
         self._observers = []
+        self._booths = []
 
     # Getter and Setter for the 'name' attribute
     def get_name(self):

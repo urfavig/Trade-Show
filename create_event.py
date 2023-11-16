@@ -1,6 +1,7 @@
 #create_event.py
 #Collects information from the use for the creation of the event
 import tkinter as tk
+import datetime
 from tkinter import messagebox
 from homepage import *
 from event import *
@@ -31,12 +32,20 @@ def create_event_window(root):
     create_button = tk.Button(create_event_window, text="Create Event", command=lambda:create_event(name_entry.get(), date_entry.get(), desc_entry.get()))
     create_button.pack(pady=10)
 
-    def create_event(name, date, description):
+    def create_event(name, start_date, end_date, description):
         try:
             # Create an Event object or perform necessary actions with the event details
-            new_event = Event(name, date, description)
+            new_event = Event(name, start_date,end_date ,description)
             messagebox.showinfo("Success","The event " + name + " has been created." )
             print(f"Event Created: {new_event.get_event_details()}")
         except Exception as e:
             # Display an error message if event creation fails
             messagebox.showerror("Error", f"Failed to create event. Error: {str(e)}")
+    #validates the entry date
+    def validate_date(date):
+        try:
+            # Try to parse the date string
+            datetime.datetime.strptime(date, '%m/%d/%Y')
+            return True
+        except ValueError:
+            return False
