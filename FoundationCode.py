@@ -1,6 +1,6 @@
 #### Event GUI ###
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import *
 from homepage import *
 from authenication import *
 
@@ -10,7 +10,7 @@ from authenication import *
 
 # Create the main application window
 root = tk.Tk()
-root.title("Event Organizer Login")
+root.title("NTSS login")
 
 # Create and configure labels and entry fields for username and password
 username_label = tk.Label(root, text="Username:")
