@@ -61,7 +61,7 @@ class EventRegistration:
         else:
             return "Error: Insufficient data provided. Please provide all required information."
 
-    def generate_registration_number(self):
+    def generate_registration_number(self, participant_type):
         return f"{participant_type}-{self.registration_counter:04d}"
 
 class EventRegistrationGUI:
@@ -137,6 +137,10 @@ class MainApplication:
 
         # Create an instance of EventRegistration to handle the registration logic
         event_registration = EventRegistration()
+
+def open_registration_window():
+    registration_window = tk.Toplevel()
+    MainApplication(registration_window)
 
 if __name__ == "__main__":
     root = tk.Tk()
