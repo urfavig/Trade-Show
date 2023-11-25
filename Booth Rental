@@ -4,7 +4,7 @@ import random
 
 def generate_available_booths():
     # Generate a list of available booth numbers going by increments of 5
-    return [str(number) for number in range(100, 1000, 5)]
+    return [str(number) for number in range(100, 400, 5)]
 
 def calculate_rental_cost(booth_number, duration):
     # Replace this with your actual booth rental cost logic
@@ -34,8 +34,11 @@ def submit_form():
         messagebox.showwarning("Warning", "Please fill in all fields.")
         return
 
+    if not rental_duration.isdigit():
+        messagebox.showwarning("Warning", "Please enter a valid number for rental duration.")
+
     # If payment method is a card, get card information
-    if payment_method.startswith("Card"):
+    if "Card" in payment_method:
         card_info = card_info_entry.get()
         if not card_info:
             messagebox.showwarning("Warning", "Please enter card information.")
@@ -54,17 +57,25 @@ def submit_form():
         result_message += f"Payment Method: {payment_method}"
 
         # Include card information in the result message if payment method is a card
-        if payment_method.startswith("Card"):
+        if "Card" in payment_method:
             result_message += f"\nCard Information: {card_info}"
 
         # Show success message
         messagebox.showinfo("Payment Successful", result_message)
 
-        # Remove the selected booth from the available booths
-        available_booths.remove(selected_booth)
-        booth_menu['menu'].delete(0, 'end')  # Clear the current menu
-        for booth in available_booths:
-            booth_menu['menu'].add_command(label=booth, command=tk._setit(booth_var, booth))
+        # Remove the selected booth from the available booths, after checking if it's already gone
+        if selected_booth in available_booths:
+            available_booths.remove(selected_booth)
+
+            #Reset booth_var to the first available booth, if there are any left
+            if available_booths:
+                booth_var.set(available_booths[0])
+            else:
+                booth_var.set("")
+
+            booth_menu['menu'].delete(0, 'end')  # Clear the current menu
+            for booth in available_booths:
+                booth_menu['menu'].add_command(label=booth, command=tk._setit(booth_var, booth))
     else:
         # Show failure message
         messagebox.showerror("Payment Failed", "Payment processing failed. Please try again or use a different payment method.")
@@ -72,6 +83,16 @@ def submit_form():
 # Create the main window
 root = tk.Tk()
 root.title("Booth Rental Form")
+
+#A legend for booth prices and sizes before the user completes the rental
+legend_title = tk.Label(root, text="Booth Pricing Legend:")
+legend_title.grid(row=6, column=0, sticky="w", padx=10, pady=5)
+legend_label = tk.Label(root, text=f"100 to 199 (Small): $30/day")
+legend_label.grid(row=7, column=0, sticky="w", padx=10, pady=5)
+legend_label = tk.Label(root, text=f"200 to 299 (Medium): $50/day")
+legend_label.grid(row=8, column=0, sticky="w", padx=10, pady=5)
+legend_label = tk.Label(root, text=f"300 to 399 (Large): $80/day")
+legend_label.grid(row=9, column=0, sticky="w", padx=10, pady=5)
 
 # Create and place widgets
 exhibitor_name_label = tk.Label(root, text="Exhibitor Name:")

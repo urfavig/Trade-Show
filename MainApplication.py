@@ -10,9 +10,10 @@ class EventRegistration:
         self.registration_counter = 0
 
     def register_exhibitor(self, name, topic, email, contact_number):
+        participant_type = "E"
         if name and topic and email and contact_number:
             self.registration_counter += 1
-            registration_number = self.generate_registration_number()
+            registration_number = self.generate_registration_number(participant_type)
             exhibitor_info = {
                 'Registration Number': registration_number,
                 'Name': name,
@@ -26,13 +27,11 @@ class EventRegistration:
         else:
             return "Error: Insufficient data provided. Please provide all required information."
 
-    def generate_registration_number(self):
-        return f"REG-{self.registration_counter:04d}"
-
     def register_speaker(self, name, topic, email, contact_number):
+        participant_type = "S"
         if name and topic and email and contact_number:
             self.registration_counter += 1
-            registration_number = self.generate_registration_number()
+            registration_number = self.generate_registration_number(participant_type)
             speaker_info = {
                 'Registration Number': registration_number,
                 'Name': name,
@@ -46,9 +45,10 @@ class EventRegistration:
             return "Error: Insufficient data provided. Please provide all required information."
 
     def register_observer(self, name, topic, email, contact_number):
+        participant_type = "O"
         if name and topic and email and contact_number:
             self.registration_counter += 1
-            registration_number = self.generate_registration_number()
+            registration_number = self.generate_registration_number(participant_type)
             observer_info = {
                 'Registration Number': registration_number,
                 'Name': name,
@@ -61,8 +61,8 @@ class EventRegistration:
         else:
             return "Error: Insufficient data provided. Please provide all required information."
 
-    def generate_registration_number(self):
-        return f"REG-{self.registration_counter:04d}"
+    def generate_registration_number(self, participant_type):
+        return f"{participant_type}-{self.registration_counter:04d}"
 
 class EventRegistrationGUI:
     def __init__(self, master, registration_type, display_text):
@@ -137,6 +137,10 @@ class MainApplication:
 
         # Create an instance of EventRegistration to handle the registration logic
         event_registration = EventRegistration()
+
+def open_registration_window():
+    registration_window = tk.Toplevel()
+    MainApplication(registration_window)
 
 if __name__ == "__main__":
     root = tk.Tk()

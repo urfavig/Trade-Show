@@ -17,11 +17,18 @@ class Event:
         self._name = name
 
     # Getter and Setter for the 'date' attribute
-    def get_date(self):
-        return self._date
+    def get_start_date(self):
+        return self._start_date
 
-    def set_date(self, date):
-        self._date = date
+    def set_start_date(self, date):
+        self._start_date = date
+
+    # Getter and Setter for the 'date' attribute
+    def get_end_date(self):
+        return self._end_date
+
+    def set_end_date(self, date):
+        self._end_date = date
 
     # Getter and Setter for the 'description' attribute
     def get_description(self):
