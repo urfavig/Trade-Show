@@ -11,7 +11,7 @@ class ParticipantsReportGUI:
         generate_report_button.pack(pady=10)
 
     def generate_participants_report(self):
-        # Count the number of participants for each type
+        # Count the number of participants for each type of registration
         exhibitor_count = len(self.event_registration.exhibitors)
         speaker_count = len(self.event_registration.speakers)
         observer_count = len(self.event_registration.observers)
@@ -22,6 +22,6 @@ class ParticipantsReportGUI:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    event_registration = EventRegistration()  
+    event_registration = EventRegistration()  #in mainapplication.py
     participants_report_gui = ParticipantsReportGUI(root, event_registration)
     root.mainloop()
