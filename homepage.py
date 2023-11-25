@@ -4,22 +4,20 @@ import tkinter as tk
 from tkinter import *
 from event import *
 from create_event import *
-<<<<<<< HEAD
-from modify_event import modify_event_window
-
-=======
 from MainApplication import *
->>>>>>> 803d7871e6607639349637c446354625999c1483
-
 
 #Opens the homepage for the event
 def open_homepage(username):
+    from modify_event import modify_event_window
+
     global homepage_window
     homepage_window = tk.Toplevel()
     homepage_window.title("Event Organizer Homepage")
 
     # List to store created events
     events = []
+    dummy_event = Event("Test Event", "2023-01-01", "2023-01-10", "Test Description",10)
+    events.append(dummy_event)
 
     welcome_label = tk.Label(homepage_window, text=f"Welcome, {username}!")
     welcome_label.pack(pady=20)
@@ -35,4 +33,3 @@ def open_homepage(username):
 
     logout_button = tk.Button(homepage_window,text= "Logout", command=lambda:homepage_window.destroy())
     logout_button.pack(pady = 10)
-

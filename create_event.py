@@ -47,15 +47,20 @@ def create_event_window(root,events):
     create_button.pack(pady=10)
 
     def create_event(name, start_date, end_date, description,booths):
-        try:
-            # Create an Event object or perform necessary actions with the event details
-            new_event = Event(name, start_date,end_date ,description,booths)
-            messagebox.showinfo("Success","The event " + name + " has been created." )
-            print(f"Event Created: {new_event.get_event_details()}")
-        except Exception as e:
-            # Display an error message if event creation fails
-            events.append(new_event)
-            messagebox.showerror("Error", f"Failed to create event. Error: {str(e)}")
+        if (validate_date(start_date) and validate_date(end_date)):
+            try:
+                # Create an Event object or perform necessary actions with the event details
+                new_event = Event(name, start_date,end_date ,description,booths)
+                messagebox.showinfo("Success","The event " + name + " has been created." )
+                print(f"Event Created: {new_event.get_event_details()}")
+            except Exception as e:
+                # Display an error message if event creation fails
+                events.append(new_event)
+                messagebox.showerror("Error", f"Failed to create event. Error: {str(e)}")
+        else:
+            messagebox.showinfo("Please enter date in month/day/year format please." )
+            
+
     #validates the entry date
     def validate_date(date):
         try:
@@ -64,3 +69,5 @@ def create_event_window(root,events):
             return True
         except ValueError:
             return False
+        
+    

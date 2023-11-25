@@ -1,0 +1,140 @@
+import tkinter as tk
+from tkinter import messagebox
+import random
+
+def generate_available_booths():
+    # Generate a list of available booth numbers going by increments of 5
+    return [str(number) for number in range(100, 400, 5)]
+
+def calculate_rental_cost(booth_number, duration):
+    # Replace this with your actual booth rental cost logic
+    booth_prices = {"Small": 30, "Medium": 50, "Large": 80}  # Add more sizes and prices as needed
+    booth_size = determine_booth_size(booth_number)
+    rate_per_day = booth_prices.get(booth_size, 0)
+    return rate_per_day * int(duration)
+
+def determine_booth_size(booth_number):
+    if 100 <= int(booth_number) < 200:
+        return "Small"
+    elif 200 <= int(booth_number) < 300:
+        return "Medium"
+    elif 300 <= int(booth_number) < 400:
+        return "Large"
+    else:
+        return ""
+
+def submit_form():
+    exhibitor_name = exhibitor_name_entry.get()
+    rental_duration = rental_duration_entry.get()
+    payment_method = payment_method_var.get()
+    selected_booth = booth_var.get()
+
+    # Perform validation
+    if not exhibitor_name or not rental_duration or not payment_method or not selected_booth:
+        messagebox.showwarning("Warning", "Please fill in all fields.")
+        return
+
+    if not rental_duration.isdigit():
+        messagebox.showwarning("Warning", "Please enter a valid number for rental duration.")
+
+    # If payment method is a card, get card information
+    if "Card" in payment_method:
+        card_info = card_info_entry.get()
+        if not card_info:
+            messagebox.showwarning("Warning", "Please enter card information.")
+            return
+
+    # Calculate rental cost
+    rental_cost = calculate_rental_cost(selected_booth, rental_duration)
+
+    # Simulate a successful payment
+    payment_successful = True
+
+    if payment_successful:
+        # Process the information 
+        result_message = f"Booth #{selected_booth} rented to {exhibitor_name} for {rental_duration} days.\n"
+        result_message += f"Rental Cost: ${rental_cost}\n"
+        result_message += f"Payment Method: {payment_method}"
+
+        # Include card information in the result message if payment method is a card
+        if "Card" in payment_method:
+            result_message += f"\nCard Information: {card_info}"
+
+        # Show success message
+        messagebox.showinfo("Payment Successful", result_message)
+
+        # Remove the selected booth from the available booths, after checking if it's already gone
+        if selected_booth in available_booths:
+            available_booths.remove(selected_booth)
+
+            #Reset booth_var to the first available booth, if there are any left
+            if available_booths:
+                booth_var.set(available_booths[0])
+            else:
+                booth_var.set("")
+
+            booth_menu['menu'].delete(0, 'end')  # Clear the current menu
+            for booth in available_booths:
+                booth_menu['menu'].add_command(label=booth, command=tk._setit(booth_var, booth))
+    else:
+        # Show failure message
+        messagebox.showerror("Payment Failed", "Payment processing failed. Please try again or use a different payment method.")
+
+# Create the main window
+root = tk.Tk()
+root.title("Booth Rental Form")
+
+#A legend for booth prices and sizes before the user completes the rental
+legend_title = tk.Label(root, text="Booth Pricing Legend:")
+legend_title.grid(row=6, column=0, sticky="w", padx=10, pady=5)
+legend_label = tk.Label(root, text=f"100 to 199 (Small): $30/day")
+legend_label.grid(row=7, column=0, sticky="w", padx=10, pady=5)
+legend_label = tk.Label(root, text=f"200 to 299 (Medium): $50/day")
+legend_label.grid(row=8, column=0, sticky="w", padx=10, pady=5)
+legend_label = tk.Label(root, text=f"300 to 399 (Large): $80/day")
+legend_label.grid(row=9, column=0, sticky="w", padx=10, pady=5)
+
+# Create and place widgets
+exhibitor_name_label = tk.Label(root, text="Exhibitor Name:")
+exhibitor_name_entry = tk.Entry(root)
+
+rental_duration_label = tk.Label(root, text="Rental Duration (days):")
+rental_duration_entry = tk.Entry(root)
+
+payment_method_label = tk.Label(root, text="Payment Method:")
+payment_methods = ["Credit Card", "Debit Card", "Cash"]
+payment_method_var = tk.StringVar(root)
+payment_method_var.set(payment_methods[0])  # Default value
+payment_method_menu = tk.OptionMenu(root, payment_method_var, *payment_methods)
+
+available_booths = generate_available_booths()
+booth_label = tk.Label(root, text="Booth Number:")
+booth_var = tk.StringVar(root)
+booth_var.set(available_booths[0])  # Default value
+booth_menu = tk.OptionMenu(root, booth_var, *available_booths)
+
+card_info_label = tk.Label(root, text="Card Information:")
+card_info_entry = tk.Entry(root)
+
+submit_button = tk.Button(root, text="Submit", command=submit_form)
+
+# Grid layout
+exhibitor_name_label.grid(row=0, column=0, sticky="w", padx=10, pady=5)
+exhibitor_name_entry.grid(row=0, column=1, padx=10, pady=5)
+
+rental_duration_label.grid(row=1, column=0, sticky="w", padx=10, pady=5)
+rental_duration_entry.grid(row=1, column=1, padx=10, pady=5)
+
+payment_method_label.grid(row=2, column=0, sticky="w", padx=10, pady=5)
+payment_method_menu.grid(row=2, column=1, padx=10, pady=5)
+
+booth_label.grid(row=3, column=0, sticky="w", padx=10, pady=5)
+booth_menu.grid(row=3, column=1, padx=10, pady=5)
+
+card_info_label.grid(row=4, column=0, sticky="w", padx=10, pady=5)
+card_info_entry.grid(row=4, column=1, padx=10, pady=5)
+
+submit_button.grid(row=5, column=0, columnspan=2, pady=10)
+
+# Start the main event loop
+root.mainloop()
