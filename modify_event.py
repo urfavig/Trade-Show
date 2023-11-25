@@ -5,6 +5,7 @@ from tkinter import *
 from tkinter import messagebox
 from homepage import *
 import copy
+from create_event import *
 
 def modify_event_window(root, events):
     modify_event_window = tk.Toplevel(root)
@@ -47,6 +48,9 @@ def show_event_details(selected_event, event_listbox, modify_event_window,events
     desc_label = tk.Label(event_details_window, text=f"Event Description: {selected_event.get_description()}")
     desc_label.pack(pady=10)
 
+    desc_label = tk.Label(event_details_window, text=f"Number of booths: {selected_event.get_booth_amount()}")
+    desc_label.pack(pady=10)
+
     # Add Entry widgets for modifying details
     modify_name_label = tk.Label(event_details_window, text="Modify Event Name:")
     modify_name_label.pack(pady=5)
@@ -68,10 +72,15 @@ def show_event_details(selected_event, event_listbox, modify_event_window,events
     modify_desc_entry = tk.Entry(event_details_window)
     modify_desc_entry.pack(pady=5)
 
-    modify_button = tk.Button(event_details_window, text="Modify Event", command=lambda: modify_event(selected_event, modify_name_entry, modify_start_date_entry, modify_end_date_entry, modify_desc_entry, event_listbox,events,event_details_window,modify_event_window))
+    modify_booth_amount_label = tk.Label(event_details_window, text="Modify Amount of Booths:")
+    modify_booth_amount_label.pack(pady=5)
+    modify_booth_amount_entry = tk.Entry(event_details_window)
+    modify_booth_amount_entry.pack(pady=5)
+
+    modify_button = tk.Button(event_details_window, text="Modify Event", command=lambda: modify_event(selected_event, modify_name_entry, modify_start_date_entry, modify_end_date_entry, modify_desc_entry, modify_booth_amount_entry, event_listbox, events, event_details_window, modify_event_window))
     modify_button.pack(pady=10)
 
-def modify_event(selected_event, modify_name_entry, modify_start_date_entry, modify_end_date_entry, modify_desc_entry, event_listbox,events,event_details_window,modify_event_window):
+def modify_event(selected_event, modify_name_entry, modify_start_date_entry, modify_end_date_entry, modify_desc_entry, modify_booth_amount_entry, event_listbox,events,event_details_window, modify_event_window):
     modified_event = copy.deepcopy(selected_event)
 
     # Get modified details from Entry widgets
@@ -79,6 +88,19 @@ def modify_event(selected_event, modify_name_entry, modify_start_date_entry, mod
     new_start_date = modify_start_date_entry.get()
     new_end_date = modify_end_date_entry.get()
     new_desc = modify_desc_entry.get()
+    new_booth_amount = modify_booth_amount_entry.get()
+
+    if new_start_date and not validate_date(new_start_date):
+        messagebox.showinfo("Warning", "Please enter date in month/day/year format. Example: 12/01/1999.")
+        return
+
+    if new_end_date and not validate_date(new_end_date):
+        messagebox.showinfo("Warning", "Please enter date in month/day/year format. Example: 12/01/1999.")
+        return
+
+    if new_start_date > new_end_date:
+        messagebox.showinfo("Warning", "The start date cannot be later than the end date.")
+        return
 
     # Get selected event index
     selected_event_indices = event_listbox.curselection()
@@ -98,20 +120,18 @@ def modify_event(selected_event, modify_name_entry, modify_start_date_entry, mod
         modified_event.set_end_date(new_end_date)
     if new_desc:
         modified_event.set_description(new_desc)
+    if new_booth_amount:
+        selected_event.set_booth_amount(new_booth_amount)
 
     # Update the event details in the listbox
-    events.append(modified_event)
-
-    # Update the event details in the listbox
-    event_listbox.insert(END, modified_event.get_name())
+    events[selected_event_index] = selected_event
+    event_listbox.delete(selected_event_index)
+    event_listbox.insert(selected_event_index, selected_event.get_name())
 
     messagebox.showinfo("Success", "Event details modified successfully.")
-
-    # Remove the original event from the events list
-    events.pop(events.index(selected_event))
 
     # Close the event_details_window
     event_details_window.destroy()
 
-    # Close the event_details_window
+    # Close the modify_event_window
     modify_event_window.destroy()
