@@ -1,5 +1,6 @@
+#event.py
 class Event:
-    def __init__(self,name, start_date,end_date, description,booths):
+    def __init__(self,name, start_date,end_date, description, booth_amount):
         self._name = name
         self._start_date = start_date
         self._end_date = end_date
@@ -7,6 +8,7 @@ class Event:
         self._speakers = []
         self._exhibitors = []
         self._observers = []
+        self._booth_amount = booth_amount
         self._booths = []
 
     # Getter and Setter for the 'name' attribute
@@ -37,6 +39,12 @@ class Event:
     def set_description(self, description):
         self._description = description
 
+    def get_booth_amount(self):
+        return self._booth_amount
+
+    def set_booth_amount(self, booth_amount):
+        self._booth_amount = booth_amount
+
     def register_speaker(self, speaker_name):
         self._speakers.append(speaker_name)
 
@@ -47,7 +55,7 @@ class Event:
         self._observers.append(observer_name)
 
     def get_event_details(self):
-        return f"Event: {self._name}\nDate: {self._date}\nDescription: {self._description}"
+        return f"Event: {self._name}\nStart Date: {self._start_date}\nEnd Date: {self._end_date}\nDescription: {self._description}"
 
     def get_speakers(self):
         return f"Speakers: {', '.join(self._speakers)}"
