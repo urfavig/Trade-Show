@@ -22,6 +22,6 @@ class ParticipantsReportGUI:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    event_registration = EventRegistration()  # Assuming EventRegistration is defined in another file
+    event_registration = EventRegistration()  
     participants_report_gui = ParticipantsReportGUI(root, event_registration)
     root.mainloop()
