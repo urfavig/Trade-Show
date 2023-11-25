@@ -16,7 +16,7 @@ def open_homepage(username):
 
     # List to store created events
     events = []
-    dummy_event = Event("Test Event", "2023-01-01", "2023-01-10", "Test Description",10)
+    dummy_event = Event("Test Event", "01/01/2023", "01/10/2023", "Test Description", 10)
     events.append(dummy_event)
 
     welcome_label = tk.Label(homepage_window, text=f"Welcome, {username}!")
