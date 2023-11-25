@@ -14,7 +14,7 @@ class RevenueReportGUI:
         total_revenue = self.event_registration.calculate_revenue()
         messagebox.showinfo("Revenue Report", f"Total Revenue from Registrations: ${total_revenue:.2f}")
 
-if __name__ == "__main__":
+if __name__ == "__main__": 
     root = tk.Tk()
     revenue_report_gui = RevenueReportGUI(root)
     root.mainloop()
