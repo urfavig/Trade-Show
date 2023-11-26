@@ -44,6 +44,11 @@ def submit_form():
             messagebox.showwarning("Warning", "Please enter card information.")
             return
 
+    # Check if card information is numerical
+    if not card_info.isdigit():
+        messagebox.showwarning("Warning", "Please enter a numerical value with no additional symbols for card information.")
+        return
+
     # Calculate rental cost
     rental_cost = calculate_rental_cost(selected_booth, rental_duration)
 
