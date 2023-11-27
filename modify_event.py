@@ -86,21 +86,14 @@ def show_event_details(selected_event, event_listbox, modify_event_window,events
 
 def delete_event(selected_event, event_listbox, events, event_details_window, modify_event_window):
     response = messagebox.askyesno("Delete Event", "Are you sure you want to delete this event?")
-
-    if response == 'yes':
-        # Delete the event from the events list
-        events.remove(selected_event)
-
-        # Update the event listbox
-        event_listbox.delete(event_listbox.curselection())
-
-        messagebox.showinfo("Success", "Event deleted successfully.")
-
+    if response == True:
+        events.pop(events.index(selected_event))
         # Close the event_details_window
         event_details_window.destroy()
 
         # Close the modify_event_window
         modify_event_window.destroy()
+
 
 def modify_event(selected_event, modify_name_entry, modify_start_date_entry, modify_end_date_entry, modify_desc_entry, modify_booth_amount_entry, event_listbox,events,event_details_window, modify_event_window):
     modified_event = copy.deepcopy(selected_event)
