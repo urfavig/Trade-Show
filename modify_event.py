@@ -80,6 +80,28 @@ def show_event_details(selected_event, event_listbox, modify_event_window,events
     modify_button = tk.Button(event_details_window, text="Modify Event", command=lambda: modify_event(selected_event, modify_name_entry, modify_start_date_entry, modify_end_date_entry, modify_desc_entry, modify_booth_amount_entry, event_listbox, events, event_details_window, modify_event_window))
     modify_button.pack(pady=10)
 
+    # Add a button to delete the event
+    delete_button = tk.Button(event_details_window, text="Delete Event", command=lambda: delete_event(selected_event, event_listbox, events, event_details_window, modify_event_window))
+    delete_button.pack(pady=10)
+
+def delete_event(selected_event, event_listbox, events, event_details_window, modify_event_window):
+    response = messagebox.askyesno("Delete Event", "Are you sure you want to delete this event?")
+
+    if response == 'yes':
+        # Delete the event from the events list
+        events.remove(selected_event)
+
+        # Update the event listbox
+        event_listbox.delete(event_listbox.curselection())
+
+        messagebox.showinfo("Success", "Event deleted successfully.")
+
+        # Close the event_details_window
+        event_details_window.destroy()
+
+        # Close the modify_event_window
+        modify_event_window.destroy()
+
 def modify_event(selected_event, modify_name_entry, modify_start_date_entry, modify_end_date_entry, modify_desc_entry, modify_booth_amount_entry, event_listbox,events,event_details_window, modify_event_window):
     modified_event = copy.deepcopy(selected_event)
 
@@ -104,12 +126,12 @@ def modify_event(selected_event, modify_name_entry, modify_start_date_entry, mod
 
     # Get selected event index
     selected_event_indices = event_listbox.curselection()
+    print(selected_event_indices)
 
     if not selected_event_indices:
         messagebox.showwarning("Warning", "Please select an event.")
         return
 
-    selected_event_index = selected_event_indices[0]
 
    # Update event details if new information is provided
     if new_name:
@@ -123,12 +145,19 @@ def modify_event(selected_event, modify_name_entry, modify_start_date_entry, mod
     if new_booth_amount:
         selected_event.set_booth_amount(new_booth_amount)
 
+    selected_event_index = selected_event_indices[0]
+
     # Update the event details in the listbox
-    events[selected_event_index] = selected_event
-    event_listbox.delete(selected_event_index)
-    event_listbox.insert(selected_event_index, selected_event.get_name())
+    events.append(modified_event)
+    
+    # Remove the original event from the events list
+    events.pop(events.index(selected_event))
 
     messagebox.showinfo("Success", "Event details modified successfully.")
+
+    # Update the event details in the listbox
+    event_listbox.insert(END, modified_event.get_name())
+
 
     # Close the event_details_window
     event_details_window.destroy()
