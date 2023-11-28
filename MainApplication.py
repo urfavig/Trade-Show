@@ -22,13 +22,13 @@ class EventRegistration:
         self.used_registration_numbers = set()
 
     def generate_registration_number(self, participant_type):
-        if participant_type == 'participant':
+        if participant_type == 'Staff Member':
             participant_type = 'P'
-        elif participant_type == 'exhibitor':
+        elif participant_type == 'Exhibitor':
             participant_type = 'E'
-        elif participant_type == 'speaker':
+        elif participant_type == 'Speaker':
             participant_type = 'S'
-        elif participant_type == 'observer':
+        elif participant_type == 'Observer':
             participant_type = 'O'
         else:
             return None
@@ -41,9 +41,9 @@ class EventRegistration:
                 return registration_number
             counter += 1
 
-    def register_participant(self, name, topic, email, contact_number):
+    def register_participant(self, name, topic, email, contact_number, participant_type):
         self.registration_counter += 1
-        registration_number = self.generate_registration_number('participant')
+        registration_number = self.generate_registration_number(participant_type)
         participant = Participant(registration_number, name, topic, email, contact_number)
         self.participants.append(participant)
         return f"Participant {name} successfully registered with Registration Number {registration_number}"
@@ -125,13 +125,11 @@ class CredentialEntryGUI:
         self.on_credentials_entry(username, password)
 
 class EventRegistrationGUI:
-    def __init__(self, master, registration_type, display_text, current_user):
+    def __init__(self, master, registration_type, current_user, event_registration):
         self.master = master
         self.registration_type = registration_type
         self.current_user = current_user
-
-        # Initialize event_registration as a class attribute
-        self.event_registration = EventRegistration()
+        self.event_registration = event_registration
 
         self.name_label = tk.Label(master, text="Name:")
         self.name_label.grid(row=0, column=0, sticky=tk.E)
@@ -185,8 +183,8 @@ class EventRegistrationGUI:
         email = self.email_entry.get()
         contact_number = self.contact_entry.get()
 
-        registration_method = getattr(self.event_registration, f"register_{self.registration_type.lower()}")
-        registration_result = registration_method(name, topic, email, contact_number)
+        registration_result = self.event_registration.register_participant(
+            name, topic, email, contact_number, self.registration_type)
 
         # Display confirmation overview
         confirmation_message = f"{self.registration_type} Details:\n" \
@@ -244,41 +242,63 @@ class EventRegistrationGUI:
 class MainApplication:
     def __init__(self, master):
         self.master = master
-        self.current_user = None
+        self.event_registration = EventRegistration()
+        self.show_login_screen()
 
-        self.role_selection_gui = RoleSelectionGUI(master, self.on_role_selection)
+    def show_login_screen(self):
+        # Clear existing widgets
+        self.clear_widgets()
+
+        # Initialize the login (role selection) GUI
+        self.role_selection_gui = RoleSelectionGUI(self.master, self.on_role_selection)
 
     def on_role_selection(self, selected_role):
-        self.master.title(f"Event Registration System - {selected_role}")
-        self.role_selection_gui.label.destroy()
-        self.role_selection_gui.continue_button.destroy()
-
         self.current_user = User("", "", selected_role)
+        self.show_credentials_entry_gui()
 
-        credential_entry_gui = CredentialEntryGUI(self.master, selected_role, self.on_credentials_entry)
+    def show_credentials_entry_gui(self):
+        # Clear existing widgets
+        self.clear_widgets()
+
+        # Initialize the credentials entry GUI
+        credential_entry_gui = CredentialEntryGUI(self.master, self.current_user.role, self.on_credentials_entry)
 
     def on_credentials_entry(self, username, password):
+        # Validate credentials here
         if username and password:
+            self.current_user.username = username
+            self.current_user.password = password
             messagebox.showinfo("Authentication Successful", f"Welcome, {self.current_user.role}!")
             self.show_registration_gui()
         else:
             messagebox.showerror("Authentication Failed", "Invalid credentials. Please try again.")
 
     def show_registration_gui(self):
-        notebook = ttk.Notebook(self.master)
-        notebook.pack(fill=tk.BOTH, expand=True)
+        # Clear existing widgets
+        self.clear_widgets()
 
-        participant_tab = tk.Frame(notebook)
-        organizer_tab = tk.Frame(notebook)
+        # Create the notebook widget
+        self.notebook = ttk.Notebook(self.master)
+        self.notebook.pack(fill=tk.BOTH, expand=True)
 
-        notebook.add(participant_tab, text="Participant Registration")
+        # Create a tab for the selected participant type
+        tab = tk.Frame(self.notebook)
+        self.notebook.add(tab, text=f"{self.current_user.role} Registration")
+        EventRegistrationGUI(tab, self.current_user.role, self.current_user, self.event_registration)
 
-        participant_registration_gui = EventRegistrationGUI(participant_tab, "Participant", "Participant", self.current_user)
-        exhibitor_registration_gui = EventRegistrationGUI(organizer_tab, "Exhibitor", "Exhibitor", self.current_user)
-        speaker_registration_gui = EventRegistrationGUI(organizer_tab, "Speaker", "Speaker", self.current_user)
-        observer_registration_gui = EventRegistrationGUI(organizer_tab, "Observer", "Observer", self.current_user)
+        # Add a logout button
+        logout_button = tk.Button(self.master, text="Logout", command=self.logout)
+        logout_button.pack()
 
-        self.event_registration = EventRegistration()
+    def logout(self):
+        # Logout and return to the login screen
+        self.current_user = None
+        self.show_login_screen()
+
+    def clear_widgets(self):
+        # Remove all widgets from the master frame
+        for widget in self.master.winfo_children():
+            widget.destroy()
 
 if __name__ == "__main__":
     root = tk.Tk()
