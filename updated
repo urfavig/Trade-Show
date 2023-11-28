@@ -1,0 +1,203 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+from event import Event, EventRegistration
+from create_event import create_event_window
+
+class User:
+    def __init__(self, username, password, role):
+        self.username = username
+        self.password = password
+        self.role = role
+
+class Participant:
+    def __init__(self, registration_number, name, topic, email, contact_number):
+        self.registration_number = registration_number
+        self.name = name
+        self.topic = topic
+        self.email = email
+        self.contact_number = contact_number
+
+class RoleSelectionGUI:
+    def __init__(self, master, on_selection):
+        self.master = master
+        self.on_selection = on_selection
+
+        self.label = tk.Label(master, text="Select your role:")
+        self.label.pack(pady=10)
+
+        self.roles = ["Staff Member", "Exhibitor", "Speaker", "Observer"]
+        self.buttons = []
+
+        for role in self.roles:
+            button = tk.Button(master, text=role, command=lambda r=role: self.on_selection(r))
+            button.pack()
+            self.buttons.append(button)
+
+    def disable_buttons(self):
+        for button in self.buttons:
+            button.config(state=tk.DISABLED)
+
+class CredentialEntryGUI:
+    def __init__(self, master, role, on_credentials_entry):
+        self.master = master
+        self.role = role
+        self.on_credentials_entry = on_credentials_entry
+
+        self.username_label = tk.Label(master, text="Username:")
+        self.username_label.pack(pady=10)
+
+        self.username_entry = tk.Entry(master)
+        self.username_entry.pack(pady=10)
+
+        self.password_label = tk.Label(master, text="Password:")
+        self.password_label.pack(pady=10)
+
+        self.password_entry = tk.Entry(master, show="*")
+        self.password_entry.pack(pady=10)
+
+        self.submit_button = tk.Button(master, text="Submit", command=self.submit_credentials)
+        self.submit_button.pack(pady=10)
+
+    def submit_credentials(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+        self.on_credentials_entry(username, password)
+
+class EventRegistrationGUI:
+    def __init__(self, master, registration_type, display_text, current_user, event_registration):
+        self.master = master
+        self.registration_type = registration_type
+        self.current_user = current_user
+        self.event_registration = event_registration
+
+        self.name_label = tk.Label(master, text="Name:")
+        self.name_label.grid(row=0, column=0, sticky=tk.E)
+
+        self.name_entry = tk.Entry(master)
+        self.name_entry.grid(row=0, column=1)
+
+        self.topic_label = tk.Label(master, text="Topic:")
+        self.topic_label.grid(row=1, column=0, sticky=tk.E)
+
+        self.topic_entry = tk.Entry(master)
+        self.topic_entry.grid(row=1, column=1)
+
+        self.email_label = tk.Label(master, text="Email:")
+        self.email_label.grid(row=2, column=0, sticky=tk.E)
+
+        self.email_entry = tk.Entry(master)
+        self.email_entry.grid(row=2, column=1)
+
+        self.contact_label = tk.Label(master, text="Contact Number:")
+        self.contact_label.grid(row=3, column=0, sticky=tk.E)
+
+        self.contact_entry = tk.Entry(master)
+        self.contact_entry.grid(row=3, column=1)
+
+        self.register_button = tk.Button(master, text=f"Register {registration_type}", command=self.register)
+        self.register_button.grid(row=4, column=0, columnspan=2, pady=10)
+
+        self.view_info_button = tk.Button(master, text=f"View {registration_type} Info", command=self.view_info)
+        self.view_info_button.grid(row=5, column=0, columnspan=2, pady=10)
+
+        self.update_button = tk.Button(master, text=f"Update {registration_type} Info", command=self.update_info)
+        self.update_button.grid(row=6, column=0, columnspan=2, pady=10)
+
+        self.delete_button = tk.Button(master, text=f"Delete {registration_type}", command=self.delete_info)
+        self.delete_button.grid(row=7, column=0, columnspan=2, pady=10)
+
+        self.search_label = tk.Label(master, text=f"Enter {registration_type} Registration Number:")
+        self.search_label.grid(row=8, column=0, sticky=tk.E)
+
+        self.search_entry = tk.Entry(master)
+        self.search_entry.grid(row=8, column=1)
+
+        self.search_button = tk.Button(master, text=f"Search {registration_type}", command=self.search_info)
+        self.search_button.grid(row=9, column=0, columnspan=2, pady=10)
+
+    def register(self):
+        name = self.name_entry.get()
+        topic = self.topic_entry.get()
+        email = self.email_entry.get()
+        contact_number = self.contact_entry.get()
+
+        if not all([name, topic, email, contact_number]):
+            messagebox.showwarning("Input Error", "Please fill in all fields.")
+            return
+
+        try:
+            contact_number = int(contact_number)
+        except ValueError:
+            messagebox.showwarning("Input Error", "Contact Number must be a numerical value.")
+            return
+
+        registration_method = getattr(self.event_registration, f"register_{self.registration_type.lower()}")
+        registration_result = registration_method(self.registration_type.lower(), name, topic, email, contact_number)
+
+        confirmation_message = f"{self.registration_type.capitalize()} Details:\n" \
+                               f"Name: {name}\n" \
+                               f"Topic: {topic}\n" \
+                               f"Email: {email}\n
+        messagebox.showinfo("Search Result", "Search functionality will be implemented in the future.")
+
+class MainApplication:
+    def __init__(self, master):
+        self.master = master
+        self.current_user = None
+
+        self.role_selection_gui = RoleSelectionGUI(master, self.on_role_selection)
+
+    def on_role_selection(self, selected_role):
+        # Disable role selection buttons after a role is selected
+        self.role_selection_gui.disable_buttons()
+
+        if selected_role == "Staff Member":
+            # Staff Member login
+            self.show_staff_member_login()
+        else:
+            # Other user types (Exhibitor, Speaker, Observer) registration
+            self.show_user_registration(selected_role)
+
+    def show_staff_member_login(self):
+        # Create a new window for Staff Member login
+        staff_member_login_window = tk.Toplevel(self.master)
+        staff_member_login_window.title("Staff Member Login")
+
+        credential_entry_gui = CredentialEntryGUI(
+            staff_member_login_window, "Staff Member", self.on_staff_member_login
+        )
+
+    def on_staff_member_login(self, username, password):
+        # Placeholder for staff member login validation
+        # You should implement actual authentication logic here
+        if username == "admin" and password == "admin123":
+            messagebox.showinfo("Login Successful", "Welcome, Staff Member!")
+            self.show_staff_member_registration()
+        else:
+            messagebox.showerror("Login Failed", "Invalid credentials. Please try again.")
+
+    def show_staff_member_registration(self):
+        # Create a new window for Staff Member registration
+        staff_member_registration_window = tk.Toplevel(self.master)
+        staff_member_registration_window.title("Staff Member Registration")
+
+        # Use the StaffMemberRegistrationGUI for staff member registration
+        staff_member_registration_gui = StaffMemberRegistrationGUI(
+            staff_member_registration_window, "Exhibitor", "Staff Member Registration", EventRegistration()
+        )
+
+    def show_user_registration(self, selected_role):
+        # Create a new window for Exhibitor, Speaker, Observer registration
+        user_registration_window = tk.Toplevel(self.master)
+        user_registration_window.title(f"{selected_role} Registration")
+
+        # Use the EventRegistrationGUI for user registration
+        user_registration_gui = EventRegistrationGUI(
+            user_registration_window, selected_role, f"{selected_role} Registration", self.current_user, EventRegistration()
+        )
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Event Management System")
+    app = MainApplication(root)
+    root.mainloop()
