@@ -125,7 +125,7 @@ class CredentialEntryGUI:
         self.on_credentials_entry(username, password)
 
 class EventRegistrationGUI:
-    def __init__(self, master, registration_type, current_user, event_registration):
+    def __init__(self, master, registration_type, current_user, event_registration, on_logout):
         self.master = master
         self.registration_type = registration_type
         self.current_user = current_user
@@ -174,8 +174,12 @@ class EventRegistrationGUI:
         self.search_entry = tk.Entry(master)
         self.search_entry.grid(row=8, column=1)
 
-        self.search_button = tk.Button(master, text=f"Search {registration_type}", command=self.search_info)
-        self.search_button.grid(row=9, column=0, columnspan=2, pady=10)
+        # Somehow this element isn't visible even without commenting it out?
+        # self.search_button = tk.Button(master, text=f"Search {registration_type}", command=self.search_info)
+        # self.search_button.grid(row=9, column=0, columnspan=2, pady=10)
+
+        self.logout_button = tk.Button(master, text="Logout", command=on_logout)
+        self.logout_button.grid(row=9, column=0, columnspan=2, pady=10)
     
     def register(self):
         name = self.name_entry.get()
@@ -274,24 +278,19 @@ class MainApplication:
             messagebox.showerror("Authentication Failed", "Invalid credentials. Please try again.")
 
     def show_registration_gui(self):
-        # Clear existing widgets
         self.clear_widgets()
 
-        # Create the notebook widget
         self.notebook = ttk.Notebook(self.master)
         self.notebook.pack(fill=tk.BOTH, expand=True)
 
-        # Create a tab for the selected participant type
+        selected_role = self.current_user.role
         tab = tk.Frame(self.notebook)
-        self.notebook.add(tab, text=f"{self.current_user.role} Registration")
-        EventRegistrationGUI(tab, self.current_user.role, self.current_user, self.event_registration)
+        self.notebook.add(tab, text=f"{selected_role} Registration")
 
-        # Add a logout button
-        logout_button = tk.Button(self.master, text="Logout", command=self.logout)
-        logout_button.pack()
+        EventRegistrationGUI(tab, selected_role, self.current_user, self.event_registration, self.logout)
 
     def logout(self):
-        # Logout and return to the login screen
+        self.clear_widgets()
         self.current_user = None
         self.show_login_screen()
 
@@ -299,6 +298,11 @@ class MainApplication:
         # Remove all widgets from the master frame
         for widget in self.master.winfo_children():
             widget.destroy()
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    main_app = MainApplication(root)
+    root.mainloop()
 
 if __name__ == "__main__":
     root = tk.Tk()
